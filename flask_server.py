@@ -14,6 +14,9 @@ os.makedirs(DATA_DIR, exist_ok=True)
 if not os.path.exists(ACCOUNTS_FILE):
     with open(ACCOUNTS_FILE, "w", encoding="utf-8") as f:
         json.dump({"admin": {"pwd": "123", "role": "admin", "disabled": False}}, f, indent=2)
+@app.route("/ping", methods=["GET"])
+def ping():
+    return "pong", 200
 
 @app.before_request
 def check_api_key():
@@ -62,3 +65,9 @@ def get_logs():
         return jsonify([])
     with open(LOG_FILE, "r", encoding="utf-8") as f:
         return jsonify(json.load(f))
+if __name__ == "__main__":
+    from keep_alive import keep_alive_loop
+    import threading
+
+    threading.Thread(target=keep_alive_loop, daemon=True).start()
+    app.run(host="0.0.0.0", port=3000)
