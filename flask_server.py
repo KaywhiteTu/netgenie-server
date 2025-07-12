@@ -17,10 +17,9 @@ if not os.path.exists(ACCOUNTS_FILE):
 
 @app.before_request
 def check_api_key():
-    if request.path.startswith("/accounts") or request.path.startswith("/logs"):
-        key = request.headers.get("Authorization")
-        if key != f"Bearer {API_KEY}":
-            return jsonify({"error": "Unauthorized"}), 401
+    key = request.headers.get("Authorization")
+    if key != "Bearer admin-secret-key":
+        return jsonify({"error": "Unauthorized"}), 401
 
 @app.route("/accounts", methods=["GET"])
 def get_accounts():
